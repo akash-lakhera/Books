@@ -1,7 +1,9 @@
 const Model = require("../models/book");
-
+const mongoose=require("mongoose")
+idC=mongoose.Types.ObjectId
 const getAll = async (req, res, next) => {
     try {
+
         let data = await Model.find({});
         res.status(200).json(data);
         
@@ -13,8 +15,9 @@ const getAll = async (req, res, next) => {
 };
 const getBook = async (req, res, next) => {
   try {
-    let book = req.params.book;
-    let data = await Model.findOne({ name: book });
+    let book = idC(req.params.book);
+
+    let data = await Model.findOne({ _id: book });
     res.status(200).json(data);
   } catch (error) {
     console.log(error)
@@ -40,32 +43,27 @@ const addBook = async (req, res, next) => {
 const modBook = async (req, res, next) => {
   try {
     console.log("Mod")
-    const book = req.params.book;
+    let book = idC(req.params.book);
     const { name, price, author, pages, imageurl } = req.body;
-    let val
+    let setObject={}
     if (name) {
-        [val]=Object.keys({name})
-        v=name;
+        setObject.name=name 
     }
     if (price) {
-         [val]=Object.keys({price})
-        v=price
+        setObject.price=price
     }
     if (author) {
-       [val]=Object.keys({author})
-        v=author
+      setObject.author=author
     }
     if (pages) {
-         [val]=Object.keys({pages})
-        v=pages
+         setObject.pages=pages
     }
     if (imageurl) {
-       [val]=Object.keys({imageurl})
-        v=imageurl
+       setObject.imageurl=imageurl
     }
-    let data=await Model.updateOne({name:book},{$set:{[val]:v}})
-    console.log(val)
-    console.log(v)
+    console.log(setObject)
+    let data=await Model.updateOne({_id:book},{$set:setObject})
+    console.log(data)
     res.status(200).send({ data: "book updated" });
   } catch (error) {
     console.log(error)
@@ -74,8 +72,8 @@ const modBook = async (req, res, next) => {
 };
 const deleteBook = async (req, res, next) => {
   try {
-    const book=req.params.book
-    let data=await Model.findOneAndDelete({name:book})
+    let book = idC(req.params.book);
+    let data=await Model.findOneAndDelete({_id:book})
     res.status(200).send({ data: "book deleted" });
   } catch (error) {
     console.log(error)
