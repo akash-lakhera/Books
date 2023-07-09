@@ -42,7 +42,7 @@ const addBook = async (req, res, next) => {
 };
 const modBook = async (req, res, next) => {
   try {
-    console.log("Mod")
+
     let book = idC(req.params.book);
     const { name, price, author, pages, imageurl } = req.body;
     let setObject={}
@@ -61,9 +61,9 @@ const modBook = async (req, res, next) => {
     if (imageurl) {
        setObject.imageurl=imageurl
     }
-    console.log(setObject)
+   
     let data=await Model.updateOne({_id:book},{$set:setObject})
-    console.log(data)
+  
     res.status(200).send({ data: "book updated" });
   } catch (error) {
     console.log(error)
